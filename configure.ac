@@ -2,12 +2,14 @@
 AC_PREREQ([2.68])
 AC_INIT([gg], [0.01], [gg@cs.stanford.edu])
 AM_INIT_AUTOMAKE([foreign])
+LT_INIT
 #AC_CONFIG_SRCDIR([src/])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_RANLIB
+AC_PROG_CC
 
 # Add picky CXXFLAGS
 CXX11_FLAGS="-std=c++14 -pthread"
@@ -53,6 +55,7 @@ AC_CONFIG_FILES([Makefile
                  src/thunk/Makefile
                  src/trace/Makefile
                  src/frontend/Makefile
-                 src/tests/Makefile])
+                 src/tests/Makefile
+                 src/compiler/Makefile])
 
 AC_OUTPUT

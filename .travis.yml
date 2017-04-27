@@ -10,6 +10,7 @@ addons:
     - g++-6
     - libcajun-dev 
     - libssl-dev
+    - libtool
 
 before_script:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 99
