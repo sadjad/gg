@@ -9,6 +9,7 @@
 
 #include "thunk/factory.hh"
 #include "thunk/thunk.hh"
+#include "thunk/ggutils.hh"
 #include "util/optional.hh"
 #include "util/temp_file.hh"
 
@@ -168,6 +169,8 @@ private:
 
   const bool preprocess_locally_ { false };
   const bool merge_stages_ { false };
+
+  Optional<gg::meta::Metadata> metadata_ { false };
 
   std::vector<std::string> envars_ { { "PATH=" + GG_BIN_PREFIX }, };
 

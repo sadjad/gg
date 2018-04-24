@@ -446,6 +446,10 @@ GCCModelGenerator::GCCModelGenerator( const OperationMode operation_mode,
   }
 
   dump_gcc_specs( specs_tempfile_ );
+
+  if ( gg::meta::is_metainfer() ) {
+    metadata_.reset( gg::meta::metadata( argc, argv ) );
+  }
 }
 
 void GCCModelGenerator::generate()
