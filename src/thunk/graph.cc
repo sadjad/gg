@@ -200,7 +200,7 @@ DependencyGraph::DependencyGraph( const vector<string> & targets )
 
 void DependencyGraph::add_thunk( const string & full_hash )
 {
-  const string hash = gg::hash::base( full_hash );
+  string hash = gg::hash::base( full_hash );
 
   if ( thunks_.count( hash ) ) {
     return;
@@ -209,6 +209,7 @@ void DependencyGraph::add_thunk( const string & full_hash )
   const Thunk thunk { ThunkReader::read( gg::paths::blob( hash ), hash ) };
 
   referencing_thunks_[ hash ];
+  referenced_thunks_[ hash ];
 
   for ( const Thunk::DataItem & item : thunk.thunks() ) {
     const string item_base = gg::hash::base( item.first );
@@ -216,6 +217,8 @@ void DependencyGraph::add_thunk( const string & full_hash )
     referencing_thunks_[ item_base ].emplace( hash );
     referenced_thunks_[ hash ].emplace( item_base );
   }
+
+  thunks_.emplace( move( hash ) );
 }
 
 unordered_set<string> DependencyGraph::ready_to_execute()
