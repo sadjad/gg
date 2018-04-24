@@ -12,7 +12,8 @@
 #include <crypto++/hex.h>
 #include <crypto++/base64.h>
 
-#include "thunk_reader.hh"
+#include "protobufs/util.hh"
+#include "thunk/thunk_reader.hh"
 #include "util/digest.hh"
 #include "util/exception.hh"
 #include "util/file_descriptor.hh"
@@ -336,6 +337,33 @@ namespace gg {
 
       return result;
     }
+
+    protobuf::meta::Metadata metadata( int argc, char ** argv )
+    {
+      protobuf::meta::Metadata result;
+
+      for ( int i = 0; i < argc; i++ ) {
+        *result.add_args() = argv[ i ];
+      }
+
+      const string cwd = roost::current_working_directory().string();
+      const string base_path = safe_getenv( "GG_BASEPATH" );
+
+      if ( mismatch( base_path.begin(), base_path.end(), cwd.begin() ).first != base_path.end() ) {
+        throw runtime_error( "cannot get the relative working directory for " + cwd
+                             + " with " + base_path + " as base path" );
+      }
+
+      result.set_working_directory( cwd.substr( base_path.length() ) );
+      return result;
+    }
+
+    void dump_metadata( const string & hash, const gg::protobuf::meta::Metadata & metadata )
+    {
+      const string metadata_str = protoutil::to_json( metadata );
+      roost::atomic_create( metadata_str, paths::metadata( hash ) );
+    }
+
   }
 
 }

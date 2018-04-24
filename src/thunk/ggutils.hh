@@ -8,8 +8,9 @@
 #include <vector>
 #include <sys/types.h>
 
-#include "manifest.hh"
-#include "thunk.hh"
+#include "protobufs/meta.pb.h"
+#include "thunk/manifest.hh"
+#include "thunk/thunk.hh"
 #include "util/path.hh"
 #include "util/optional.hh"
 
@@ -67,9 +68,12 @@ namespace gg {
   }
 
   namespace models {
-    void init();
     static const std::string OPEN_TO_DETACH_PATH = "/__gg__detach_from_tracing__/";
+
+    void init();
     std::vector<std::string> args_to_vector( int argc, char ** argv, const std::string & argv0 = {} );
+    gg::protobuf::meta::Metadata metadata( int argc, char ** argv );
+    void dump_metadata( const std::string & hash, const gg::protobuf::meta::Metadata & metadata );
   }
 }
 
