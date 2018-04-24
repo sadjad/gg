@@ -67,13 +67,13 @@ namespace gg {
     void store( const Thunk & thunk, const FileManifest & manifest );
   }
 
-  namespace meta {
+  namespace metadata {
     typedef gg::protobuf::meta::Metadata Metadata;
 
-    Metadata metadata( int argc, char ** argv );
-    Metadata load_metadata( const std::string & hash );
-    void save_metadata( const std::string & hash, const Metadata & metadata );
-    bool has_metadata( const std::string & hash );
+    Metadata create( int argc, char ** argv );
+    Metadata load( const std::string & hash );
+    void save( const std::string & hash, const Metadata & metadata );
+    bool has( const std::string & hash );
 
     bool is_metainfer();
   }

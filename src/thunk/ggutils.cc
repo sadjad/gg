@@ -307,9 +307,9 @@ namespace gg {
 
   }
 
-  namespace meta {
+  namespace metadata {
 
-    Metadata metadata( int argc, char ** argv )
+    Metadata create( int argc, char ** argv )
     {
       Metadata result;
 
@@ -329,7 +329,7 @@ namespace gg {
       return result;
     }
 
-    Metadata load_metadata( const string & hash  )
+    Metadata load( const string & hash  )
     {
       Metadata metadata;
       const string metadata_str = roost::read_file( paths::metadata( hash ) );
@@ -337,13 +337,13 @@ namespace gg {
       return metadata;
     }
 
-    void save_metadata( const string & hash, const Metadata & metadata )
+    void save( const string & hash, const Metadata & metadata )
     {
       const string metadata_str = protoutil::to_json( metadata );
       roost::atomic_create( metadata_str, paths::metadata( hash ) );
     }
 
-    bool has_metadata( const string & hash )
+    bool has( const string & hash )
     {
       return roost::exists( paths::metadata( hash ) );
     }

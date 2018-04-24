@@ -16,6 +16,7 @@
 #include <libgen.h>
 #include <sys/ioctl.h>
 
+#include "protobufs/util.hh"
 #include "thunk/factory.hh"
 #include "thunk/ggutils.hh"
 #include "thunk/thunk.hh"
@@ -281,7 +282,7 @@ string GCCModelGenerator::generate_thunk( const GCCStage first_stage,
 
     dummy_dirs.push_back( "." );
 
-    return ThunkFactory::generate(
+    const string hash = ThunkFactory::generate(
       gcc_function( operation_mode_, all_args, envars_ ),
       base_infiles,
       base_executables,
@@ -292,6 +293,12 @@ string GCCModelGenerator::generate_thunk( const GCCStage first_stage,
         | ThunkFactory::Options::generate_manifest
         | ThunkFactory::Options::include_filenames
     );
+
+    if ( metadata_.initialized() ) {
+      gg::metadata::save( hash, *metadata_ );
+    }
+
+    return hash;
   }
 
   /******************************************************************/
@@ -447,8 +454,8 @@ GCCModelGenerator::GCCModelGenerator( const OperationMode operation_mode,
 
   dump_gcc_specs( specs_tempfile_ );
 
-  if ( gg::meta::is_metainfer() ) {
-    metadata_.reset( gg::meta::metadata( argc, argv ) );
+  if ( gg::metadata::is_metainfer() ) {
+    metadata_.reset( gg::metadata::create( argc, argv ) );
   }
 }
 

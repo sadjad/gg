@@ -170,7 +170,7 @@ private:
   const bool preprocess_locally_ { false };
   const bool merge_stages_ { false };
 
-  Optional<gg::meta::Metadata> metadata_ { false };
+  Optional<gg::metadata::Metadata> metadata_ { false };
 
   std::vector<std::string> envars_ { { "PATH=" + GG_BIN_PREFIX }, };
 
