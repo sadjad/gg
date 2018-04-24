@@ -67,13 +67,20 @@ namespace gg {
     void store( const Thunk & thunk, const FileManifest & manifest );
   }
 
+  namespace meta {
+    typedef gg::protobuf::meta::Metadata Metadata;
+
+    Metadata metadata( int argc, char ** argv );
+    Metadata load_metadata( const std::string & hash );
+    void save_metadata( const std::string & hash, const Metadata & metadata );
+    bool has_metadata( const std::string & hash );
+  }
+
   namespace models {
     static const std::string OPEN_TO_DETACH_PATH = "/__gg__detach_from_tracing__/";
 
     void init();
     std::vector<std::string> args_to_vector( int argc, char ** argv, const std::string & argv0 = {} );
-    gg::protobuf::meta::Metadata metadata( int argc, char ** argv );
-    void dump_metadata( const std::string & hash, const gg::protobuf::meta::Metadata & metadata );
   }
 }
 

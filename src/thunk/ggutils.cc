@@ -307,6 +307,50 @@ namespace gg {
 
   }
 
+  namespace meta {
+
+    Metadata metadata( int argc, char ** argv )
+    {
+      Metadata result;
+
+      for ( int i = 0; i < argc; i++ ) {
+        *result.add_args() = argv[ i ];
+      }
+
+      const string cwd = roost::current_working_directory().string();
+      const string base_path = safe_getenv( "GG_BASEPATH" );
+
+      if ( mismatch( base_path.begin(), base_path.end(), cwd.begin() ).first != base_path.end() ) {
+        throw runtime_error( "cannot get the relative working directory for " + cwd
+                             + " with " + base_path + " as base path" );
+      }
+
+      result.set_working_directory( cwd.substr( base_path.length() ) );
+      return result;
+    }
+
+    Metadata load_metadata( const string & hash  )
+    {
+      Metadata metadata;
+      const string metadata_str = roost::read_file( paths::metadata( hash ) );
+      protoutil::from_json( metadata_str, metadata );
+      return metadata;
+    }
+
+    void save_metadata( const string & hash, const Metadata & metadata )
+    {
+      const string metadata_str = protoutil::to_json( metadata );
+      roost::atomic_create( metadata_str, paths::metadata( hash ) );
+    }
+
+    bool has_metadata( const string & hash )
+    {
+      return roost::exists( paths::metadata( hash ) );
+    }
+
+
+  }
+
   namespace models {
 
     void init()
@@ -336,32 +380,6 @@ namespace gg {
       }
 
       return result;
-    }
-
-    protobuf::meta::Metadata metadata( int argc, char ** argv )
-    {
-      protobuf::meta::Metadata result;
-
-      for ( int i = 0; i < argc; i++ ) {
-        *result.add_args() = argv[ i ];
-      }
-
-      const string cwd = roost::current_working_directory().string();
-      const string base_path = safe_getenv( "GG_BASEPATH" );
-
-      if ( mismatch( base_path.begin(), base_path.end(), cwd.begin() ).first != base_path.end() ) {
-        throw runtime_error( "cannot get the relative working directory for " + cwd
-                             + " with " + base_path + " as base path" );
-      }
-
-      result.set_working_directory( cwd.substr( base_path.length() ) );
-      return result;
-    }
-
-    void dump_metadata( const string & hash, const gg::protobuf::meta::Metadata & metadata )
-    {
-      const string metadata_str = protoutil::to_json( metadata );
-      roost::atomic_create( metadata_str, paths::metadata( hash ) );
     }
 
   }
