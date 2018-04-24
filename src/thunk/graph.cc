@@ -188,3 +188,65 @@ string ExecutionGraph::original_hash( const string & updated_hash ) const
   return original_hashes_.count( updated_hash ) ? original_hashes_.at( updated_hash )
                                                 : updated_hash;
 }
+
+/* DependencyGraph */
+
+DependencyGraph::DependencyGraph( const vector<string> & targets )
+{
+  for ( const string & target : targets ) {
+    add_thunk( target );
+  }
+}
+
+void DependencyGraph::add_thunk( const string & full_hash )
+{
+  const string hash = gg::hash::base( full_hash );
+
+  if ( thunks_.count( hash ) ) {
+    return;
+  }
+
+  const Thunk thunk { ThunkReader::read( gg::paths::blob( hash ), hash ) };
+
+  referencing_thunks_[ hash ];
+
+  for ( const Thunk::DataItem & item : thunk.thunks() ) {
+    const string item_base = gg::hash::base( item.first );
+    add_thunk( gg::hash::base( item_base ) );
+    referencing_thunks_[ item_base ].emplace( hash );
+    referenced_thunks_[ hash ].emplace( item_base );
+  }
+}
+
+unordered_set<string> DependencyGraph::ready_to_execute()
+{
+  unordered_set<string> result;
+
+  for ( const auto & item : referenced_thunks_ ) {
+    if ( item.second.size() == 0 ) {
+      result.emplace( item.first );
+    }
+  }
+
+  return result;
+}
+
+unordered_set<string> DependencyGraph::remove_thunk( const string & hash )
+{
+  if ( referenced_thunks_.at( hash ).size() != 0 ) {
+    throw runtime_error( "cannot remove a thunk with with unprocessed references" );
+  }
+
+  unordered_set<string> result;
+
+  for ( const string & referencing_hash : referencing_thunks_.at( hash ) ) {
+    auto & ref = referenced_thunks_.at( referencing_hash );
+    ref.erase( hash );
+
+    if ( ref.size () == 0 ) {
+      result.emplace( referencing_hash );
+    }
+  }
+
+  return result;
+}

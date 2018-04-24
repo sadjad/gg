@@ -1,4 +1,4 @@
-/* -*-mode:c++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+ /* -*-mode:c++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 
 #ifndef GRAPH_HH
 #define GRAPH_HH
@@ -52,6 +52,22 @@ public:
   std::string updated_hash( const std::string & original_hash ) const;
   std::string original_hash( const std::string & updated_hash ) const;
   size_t size() const { return thunks_.size(); }
+};
+
+class DependencyGraph
+{
+private:
+  std::unordered_set<std::string> thunks_ {};
+  std::unordered_map<std::string, std::unordered_set<std::string>> referencing_thunks_ {};
+  std::unordered_map<std::string, std::unordered_set<std::string>> referenced_thunks_ {};
+
+  void add_thunk( const std::string & hash );
+
+public:
+  DependencyGraph( const std::vector<std::string> & hashes );
+
+  std::unordered_set<std::string> ready_to_execute();
+  std::unordered_set<std::string> remove_thunk( const std::string & hash );
 };
 
 #endif /* GRAPH_HH */
