@@ -348,6 +348,11 @@ namespace gg {
       return roost::exists( paths::metadata( hash ) );
     }
 
+    bool is_metainfer()
+    {
+      const static bool answer = ( getenv( "GG_METAINFER" ) != nullptr );
+      return answer;
+    }
 
   }
 

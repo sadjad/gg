@@ -74,6 +74,8 @@ namespace gg {
     Metadata load_metadata( const std::string & hash );
     void save_metadata( const std::string & hash, const Metadata & metadata );
     bool has_metadata( const std::string & hash );
+
+    bool is_metainfer();
   }
 
   namespace models {
